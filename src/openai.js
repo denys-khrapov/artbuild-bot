@@ -17,37 +17,17 @@ class OpenAI {
 		this.openai = new OpenAIApi(configuration)
 	}
 
-	// async chat(messages) {
-	// 	try {
-	// 		const response = await this.openai.createChatCompletion({
-	// 			model: 'gpt-3.5-turbo',
-	// 			messages
-	// 		})
-	// 		return response.data.choices[0].message
-	// 	} catch (e) {
-	// 		console.log('Error while gpt chat', e.message)
-	// 	}
-	// }
-	async chat(messages, retryCount = 0) {
+	async chat(messages) {
 		try {
 			const response = await this.openai.createChatCompletion({
 				model: 'gpt-3.5-turbo',
 				messages
-			});
-			return response.data.choices[0].message;
+			})
+			return response.data.choices[0].message
 		} catch (e) {
-			console.log('Error while gpt chat', e.message);
-			if (e.response && e.response.status === 429) { // Check if the error is a rate limit error
-				const delayTime = Math.min(Math.pow(2, retryCount) * 1000, 30000); // Exponential backoff with a max delay
-				console.log(`Rate limited. Retrying in ${delayTime / 1000} seconds...`);
-				await new Promise(resolve => setTimeout(resolve, delayTime)); // Wait for the delayTime
-				return this.chat(messages, retryCount + 1); // Retry the request
-			} else {
-				throw e; // Re-throw the error if it's not a rate limit error
-			}
+			console.log('Error while gpt chat', e.message)
 		}
 	}
-
 
 	async transcription(filepath) {
 		try {
